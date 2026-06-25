@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PCDiagnostic.Results
+﻿namespace PCDiagnostic.Results
 {
     public class SecurityResult
     {

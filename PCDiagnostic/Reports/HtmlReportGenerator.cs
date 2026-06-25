@@ -1,88 +1,84 @@
 ﻿using PCDiagnostic.Results;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Windows;
 
 namespace PCDiagnostic.Reports
 {
     public class HtmlReportGenerator
     {
-        public static string Generate(DiagnosticResult result, string reportID)
+        public string Generate(DiagnosticResult diagnostic)
         {
-            string reportsFolder =
-                Path.Combine(
-                    Environment.GetFolderPath(
-                        Environment.SpecialFolder.MyDocuments),
-                    "PCDiagnostic",
-                    "Reports");
+            StringBuilder html = new();
 
-            Directory.CreateDirectory(reportsFolder);
+            html.AppendLine("""
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<title>PCDiagnostic</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+""");
 
-            string fileName = $"Report_{reportID}.html";
+            html.AppendLine(BuildDashboard(diagnostic));
 
-            string filePath = Path.Combine(reportsFolder, fileName);
+            html.AppendLine("</body>");
+            html.AppendLine("</html>");
 
-            string html = $@"
-                <!DOCTYPE html>
-                    <html>
-                        <head>
-                            <meta charset='utf-8'>
-                            <title>PCDiagnostic</title>
+            return html.ToString();
+        }
 
-                            <style>
-                                body {{
-                                    background:#0F1117;
-                                    color:white;
-                                    font-family:Segoe UI;
-                                    padding:40px;
-                                }}
+        private string BuildDashboard(DiagnosticResult diagnostic)
+        {
+            int critical =
+                diagnostic.Findings.Count(x => x.Severity == "Critical");
 
-                                h1 {{
-                                    color:#3B82F6;
-                                }}
+            int warning =
+                diagnostic.Findings.Count(x => x.Severity == "Warning");
 
-                                .card {{
-                                    background:#161A22;
-                                    padding:20px;
-                                    border-radius:12px;
-                                    margin-bottom:20px;
-                                }}
+            int info =
+                diagnostic.Findings.Count(x => x.Severity == "Info");
 
-                                .label {{
-                                    color:#9CA3AF;
-                                }}
-    
-                            </style>
-    
-                        </head>
+            StringBuilder sb = new();
 
-                        <body>
-                            <h1>INFORMATICASSA - PCDiagnostic</h1>
-                            <div class='card'>
-                                <h2>Sistema Operatiu</h2>
+            sb.AppendLine("<div class='container'>");
 
-                                <p><span class='label'>Nom:</span> {result.OperatingSystem?.Name}</p>
+            sb.AppendLine("<h1>PCDiagnostic</h1>");
 
-                                <p><span class='label'>Versió:</span> {result.OperatingSystem?.Version}</p>
+            sb.AppendLine("<div class='summary'>");
 
-                                <p><span class='label'>Build:</span> {result.OperatingSystem?.Build}</p>
+            sb.AppendLine($"<div class='critical'>🔴 {critical} Crítics</div>");
+            sb.AppendLine($"<div class='warning'>🟠 {warning} Avisos</div>");
+            sb.AppendLine($"<div class='info'>🔵 {info} Informatius</div>");
 
-                                <p><span class='label'>Arquitectura:</span> {result.OperatingSystem?.Architecture}</p>
+            sb.AppendLine("</div>");
 
-                                <p><span class='label'>Equip:</span> {result.OperatingSystem?.ComputerName}</p>
+            sb.AppendLine("<h2>Findings</h2>");
 
-                                <p><span class='label'>Usuari:</span> {result.OperatingSystem?.CurrentUser}</p>
+            foreach (var finding in diagnostic.Findings)
+            {
+                sb.AppendLine($"""
+<div class='finding {finding.Severity.ToLower()}'>
+    <h3>{finding.Title}</h3>
+    <p>{finding.Description}</p>
+</div>
+""");
+            }
 
-                            </div>
+            sb.AppendLine("<h2>Recomanacions</h2>");
 
-                        </body>
-                    </html>";
-        
-            File.WriteAllText(filePath, html);
+            foreach (var finding in diagnostic.Findings)
+            {
+                sb.AppendLine($"""
+<div class='recommendation'>
+    {finding.Recommendation}
+</div>
+""");
+            }
 
-            return filePath;
+            sb.AppendLine("</div>");
+
+            return sb.ToString();
         }
     }
 }

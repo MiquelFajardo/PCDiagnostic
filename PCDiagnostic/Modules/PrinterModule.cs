@@ -1,9 +1,5 @@
 ﻿using PCDiagnostic.Results;
-using System;
-using System.Collections.Generic;
 using System.Management;
-using System.Text;
-using System.Windows;
 
 namespace PCDiagnostic.Modules
 {

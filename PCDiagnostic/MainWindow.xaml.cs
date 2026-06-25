@@ -1,7 +1,9 @@
-﻿using PCDiagnostic.Modules;
+﻿using Microsoft.Win32;
+using PCDiagnostic.Modules;
 using PCDiagnostic.Reports;
 using PCDiagnostic.Results;
 using PCDiagnostic.Services;
+using PCDiagnostic.Views;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -37,6 +39,15 @@ namespace PCDiagnostic
             LastReportLink.IsEnabled = true;
         }
 
+        private void BtnAbout_Click(object sender, RoutedEventArgs e)
+        {
+            Views.AboutWindow wnd = new();
+
+            wnd.Owner = this;
+
+            wnd.ShowDialog();
+        }
+
         private void BtnScan_Click(object sender, RoutedEventArgs e)
         {
             HomeScreen.Visibility = Visibility.Collapsed;
@@ -44,21 +55,28 @@ namespace PCDiagnostic
         }
 
         private void BtnReports_Click(object sender, RoutedEventArgs e)
-        {         
+        {
             string reportsFolder =
-                System.IO.Path.Combine(
-                Environment.GetFolderPath(
-                Environment.SpecialFolder.MyDocuments),
-                "PCDiagnostic",
-                "Reports");
+    Path.Combine(
+        Environment.GetFolderPath(
+            Environment.SpecialFolder.MyDocuments),
+        "PCDiagnostic",
+        "Reports");
 
             Directory.CreateDirectory(reportsFolder);
 
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = reportsFolder,
-                UseShellExecute = true
-            });
+            OpenFileDialog dlg = new OpenFileDialog();
+
+            dlg.InitialDirectory = reportsFolder;
+
+            dlg.Filter =
+                "Informes PCDiagnostic (*.json)|*.json";
+
+            if (dlg.ShowDialog() != true)
+                return;
+
+            ReportViewer.Open(dlg.FileName);
+
         }
 
         private void OpenLastReport_Click(object sender, RoutedEventArgs e)
@@ -123,32 +141,7 @@ namespace PCDiagnostic
             int modulesExecuted = 0;
             await Task.Delay(100);
 
-            // SISTEMA OPERATIU
-            if (ChkSystem.IsChecked == true)
-            {
-                currentModule++;
-                UpdateProgress("Sistema Operatiu", "Obtenint informació de Windows...", currentModule, totalModules);
-                _diagnosticResult.OperatingSystem = new OperatingSystemModule().Run();
-                modulesExecuted++;
-            }
-
-            // SEGURETAT
-            if (ChkSecurity.IsChecked == true)
-            {
-                currentModule++;
-                UpdateProgress("Seguretat", "Analitzant configuració de seguretat...", currentModule, totalModules);
-                _diagnosticResult.Security = new SecurityModule().Run();
-                modulesExecuted++;
-            }
-
-            // MAQUINARI
-            if (ChkHardware.IsChecked == true)
-            {             
-                currentModule++;               
-                UpdateProgress("Maquinari", "Obtenint informació del maquinari...", currentModule, totalModules);
-                _diagnosticResult.Hardware = new HardwareModule().Run();              
-                modulesExecuted++;
-            }
+           
 
             // RENDIMENT
             if (ChkPerformance.IsChecked == true)
@@ -165,6 +158,15 @@ namespace PCDiagnostic
                 currentModule++;
                 UpdateProgress("Xarxa", "Analitzant configuració de xarxa...", currentModule, totalModules);
                 _diagnosticResult.Network = new NetworkModule().Run();
+                modulesExecuted++;
+            }
+
+            // SISTEMA OPERATIU
+            if (ChkSystem.IsChecked == true)
+            {
+                currentModule++;
+                UpdateProgress("Sistema Operatiu", "Obtenint informació de Windows...", currentModule, totalModules);
+                _diagnosticResult.OperatingSystem = new OperatingSystemModule().Run();
                 modulesExecuted++;
             }
 
@@ -186,6 +188,15 @@ namespace PCDiagnostic
                 modulesExecuted++;
             }
 
+            // SEGURETAT
+            if (ChkSecurity.IsChecked == true)
+            {
+                currentModule++;
+                UpdateProgress("Seguretat", "Analitzant configuració de seguretat...", currentModule, totalModules);
+                _diagnosticResult.Security = new SecurityModule().Run();
+                modulesExecuted++;
+            }
+
             // REGISTRE D'EVENTS
             if (ChkEventLogs.IsChecked == true)
             {
@@ -195,16 +206,25 @@ namespace PCDiagnostic
                 modulesExecuted++;
             }
 
+            // MAQUINARI
+            if (ChkHardware.IsChecked == true)
+            {
+                currentModule++;
+                UpdateProgress("Maquinari", "Obtenint informació del maquinari...", currentModule, totalModules);
+                _diagnosticResult.Hardware = new HardwareModule().Run();
+                modulesExecuted++;
+            }
+
+            // Generar troballes
+            _diagnosticResult.Findings =  new FindingsModule().Run(_diagnosticResult);
+
 
             await Task.Delay(500);
 
             TxtFinishedInfo.Text =
                 $"Mòduls executats: {modulesExecuted}\nProblemes detectats: 0";
 
-            _lastReportPath =
-                JsonReportGenerator.Generate(
-                    _diagnosticResult,
-                    reportId);
+            _lastReportPath = JsonReportGenerator.Generate(_diagnosticResult, reportId);
 
             LoadLastReport();
 
@@ -239,6 +259,42 @@ namespace PCDiagnostic
             }
 
             ReportViewer.Open(_lastReportPath);
+        }
+
+        private void BtnSendReport_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(_lastReportPath))
+                return;
+
+            SendReportWindow wnd = new();
+
+            wnd.Owner = this;
+
+            if (wnd.ShowDialog() != true)
+                return;
+
+            try
+            {
+                EmailService.SendReport(
+                    _lastReportPath,
+                    wnd.ClientName,
+                    wnd.ClientEmail,
+                    wnd.Company);
+
+                MessageBox.Show(
+                    "Informe enviat correctament.",
+                    "PCDiagnostic",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Error enviant informe",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
     }
 }

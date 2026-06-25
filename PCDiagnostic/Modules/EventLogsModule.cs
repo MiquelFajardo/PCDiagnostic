@@ -1,9 +1,6 @@
 ﻿using PCDiagnostic.Models;
 using PCDiagnostic.Results;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
-using System.Text;
 
 namespace PCDiagnostic.Modules
 {
@@ -66,19 +63,6 @@ namespace PCDiagnostic.Modules
 
                     result.Events.Add(info);
 
-                    if (info.Level == "Critical")
-                    {
-                        result.CriticalCount++;
-                    }
-                    else
-                    {
-                        result.ErrorCount++;
-                    }
-
-                    if (result.Events.Count >= 20)
-                    {
-                        break;
-                    }
                     if (source.Contains("Kernel-Power"))
                     {
                         info.Severity = "Critical";
@@ -94,7 +78,18 @@ namespace PCDiagnostic.Modules
                         info.Severity = "Info";
                     }
 
-                    if (result.Events.Count >= 50)
+                    result.Events.Add(info);
+
+                    if (info.Level == "Critical")
+                    {
+                        result.CriticalCount++;
+                    }
+                    else
+                    {
+                        result.ErrorCount++;
+                    }
+
+                    if (result.Events.Count >= 20)
                     {
                         break;
                     }

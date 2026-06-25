@@ -1,4 +1,6 @@
-﻿namespace PCDiagnostic.Results
+﻿using PCDiagnostic.Models;
+
+namespace PCDiagnostic.Results
 {
     public class DiagnosticResult
     {
@@ -17,5 +19,7 @@
         public BackupResult? Backup { get; set; }
 
         public EventLogResult? EventLogs { get; set; }
+
+        public List<Finding> Findings { get; set; } = new();
     }
 }
