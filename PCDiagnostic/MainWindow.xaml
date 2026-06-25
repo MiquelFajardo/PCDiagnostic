@@ -5,8 +5,636 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PCDiagnostic"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="PCDiagnostic"
+        Icon="/Assets/pcdagnostic.ico"
+        Height="720"
+        Width="1000"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
+        Background="#0F1117">
+
+    <Window.Resources>
+
+        <Style x:Key="ModernButton"
+               TargetType="Button">
+
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="border"
+                                CornerRadius="12"
+                                Background="#2563EB">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#3B82F6"/>
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#1D4ED8"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+        <Style x:Key="SecondaryButton"
+               TargetType="Button">
+
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#3B82F6"/>
+            <Setter Property="BorderThickness" Value="2"/>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="border"
+                                CornerRadius="12"
+                                Background="#161A22"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#1F2937"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
 
+        <!-- Pantalla Inici -->
+        <Grid x:Name="HomeScreen">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Logo -->
+
+            <StackPanel Grid.Row="0"
+                        Margin="0,50,0,0">
+
+                <Grid HorizontalAlignment="Center">
+
+                    <TextBlock Text="INFORMATI"
+                        Foreground="White"
+                        FontSize="64"
+                        FontWeight="Bold"/>
+
+                    <TextBlock Text="CASSA"
+                        Foreground="#3B82F6"
+                        FontSize="64"
+                        FontWeight="Bold"
+                        Margin="355,0,0,0"/>
+                </Grid>
+
+                <TextBlock Text="PCDiagnostic"
+                           FontSize="54"
+                           FontWeight="Bold"
+                           Foreground="#3B82F6"
+                           Margin="0,25,0,10"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Diagnòstic i informes del sistema"
+                           Foreground="#D1D5DB"
+                           FontSize="20"
+                           HorizontalAlignment="Center"/>
+
+            </StackPanel>
+
+            <!-- Cos -->
+
+            <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+                <Button x:Name="BtnScan"
+                    Width="420"
+                    Height="70"
+                    Style="{StaticResource ModernButton}"
+                    Click="BtnScan_Click"
+                    Content="🔍 NOU DIAGNÒSTIC"/>
+
+                <StackPanel Margin="0,30,0,30">
+
+                    <TextBlock Text="📄 Últim informe disponible"
+                        Foreground="#9CA3AF"
+                        FontSize="14"
+                        HorizontalAlignment="Center"/>
+
+                    <TextBlock HorizontalAlignment="Center"
+                        Margin="0,8,0,0"
+                        FontSize="16"
+                        FontWeight="SemiBold">
+
+                        <Hyperlink x:Name="LastReportLink"
+                            Click="OpenLastReport_Click"
+                            Foreground="#3B82F6">
+                            <Run x:Name="LastReportText" Text="No disponible"/>
+                        </Hyperlink>
+                    </TextBlock>
+
+                </StackPanel>
+
+                <Button x:Name="BtnReports"
+                        Width="420"
+                        Height="70"
+                        Style="{StaticResource SecondaryButton}"
+                        Click="BtnReports_Click"
+                        Content="📁 OBRIR INFORMES"/>
+
+                <Button x:Name="BtnAbout"
+                        Width="420"
+                        Height="70"
+                        Margin="0,20,0,0"
+                        Style="{StaticResource SecondaryButton}"
+                        Click="BtnAbout_Click"
+                        Content="ⓘ INFORMACIÓ"/>
+
+
+            </StackPanel>
+
+            <!-- Peu -->
+
+            <Grid Grid.Row="2" Margin="20">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                              
+
+                <StackPanel Grid.Column="1">
+
+                    <TextBlock Text="BETA 1.0"
+                               Foreground="#F59E0B"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Right"/>
+
+                    <TextBlock Text="Creat per Miquel Fajardo"
+                               Foreground="#6B7280"
+                               HorizontalAlignment="Right"/>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Grid>
+
+        <!-- Pantalla de diagnòstics -->
+
+        <Grid x:Name="DiagnosticScreen"
+      Visibility="Collapsed"
+      Background="#0F1117">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Capçalera -->
+
+            <StackPanel Grid.Row="0"
+                Margin="0,20,0,0">
+
+                <Grid HorizontalAlignment="Center">
+
+                    <TextBlock Text="INFORMATI"
+                        Foreground="White"
+                        FontSize="54"
+                        FontWeight="Bold"/>
+
+                    <TextBlock Text="CASSA"
+                        Foreground="#3B82F6"
+                        FontSize="54"
+                        FontWeight="Bold"
+                        Margin="300,0,0,0"/>
+                </Grid>
+
+                <TextBlock Text="PCDiagnostic"
+                       FontSize="44"
+                        FontWeight="Bold"
+                        Foreground="#3B82F6"
+                        Margin="0,0,0,0"
+                        HorizontalAlignment="Center"/>
+
+            </StackPanel>
+
+            <!-- Contingut -->
+
+            <StackPanel Grid.Row="1"
+                Width="500"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="0,00,0,0">
+
+                <TextBlock Text="Seleccioneu els mòduls que voleu analitzar"
+                   Foreground="#9CA3AF"
+                   FontSize="16"
+                   Margin="0,10,0,10"
+                   HorizontalAlignment="Center"/>
+
+                <Grid Margin="0,10,0,10">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+
+                        <CheckBox x:Name="ChkSystem"
+                            Content="Sistema Operatiu"
+                            IsChecked="True"
+                            Margin="0,8"
+                            FontSize="18"
+                            Foreground="White"/>
+
+                        <CheckBox x:Name="ChkHardware"
+                            Content="Maquinari"
+                            IsChecked="True"
+                            Margin="0,8"
+                            FontSize="18"
+                            Foreground="White"/>
+
+                        <CheckBox x:Name="ChkPerformance"
+                            Content="Rendiment"
+                            IsChecked="True"
+                            Margin="0,8"
+                            FontSize="18"
+                            Foreground="White"/>
+
+                        <CheckBox x:Name="ChkSecurity"
+                            Content="Seguretat"
+                            IsChecked="True"
+                            Margin="0,8"
+                            FontSize="18"
+                            Foreground="White"/>
+
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+
+                        <CheckBox x:Name="ChkNetwork"
+                            Content="Xarxa"
+                            IsChecked="True"
+                            Margin="0,8"
+                            FontSize="18"
+                            Foreground="White"/>
+
+                        <CheckBox x:Name="ChkPrinters"
+                            Content="Impressores"
+                            Margin="0,8"
+                            FontSize="18"
+                            Foreground="White"/>
+
+                        <CheckBox x:Name="ChkBackup"
+                            Content="Còpies de Seguretat"
+                            Margin="0,8"
+                            FontSize="18"
+                            Foreground="White"/>
+
+                        <CheckBox x:Name="ChkEventLogs"
+                            Content="Registre d'Esdeveniments"
+                            IsChecked="True"    
+                            Margin="0,8"
+                            FontSize="18"
+                            Foreground="White"/>
+
+                    </StackPanel>
+
+                </Grid>
+
+                <Button Content="INICIAR DIAGNÒSTIC"
+                Height="60"
+                Margin="0,30,0,0"
+                Style="{StaticResource ModernButton}"
+                Click="BtnStartDiagnostic_Click"/>
+
+                <Button Content="← Tornar"
+                Width="130"
+                Height="40"
+                Style="{StaticResource SecondaryButton}"
+                HorizontalAlignment="Right"
+                Margin="0,25,0,25"
+                Click="BtnBack_Click"/>
+
+            </StackPanel>
+
+            <!-- Peu -->
+
+            <Border Grid.Row="2"
+            Height="80">
+
+                <Grid Grid.Row="2" Margin="0,28,20,0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="1">
+
+                        <TextBlock Text="BETA 1.0"
+                   Foreground="#F59E0B"
+                   FontWeight="SemiBold"
+                   HorizontalAlignment="Right"/>
+
+                        <TextBlock Text="Creat per Miquel Fajardo"
+                   Foreground="#6B7280"
+                   HorizontalAlignment="Right"/>
+
+                    </StackPanel>
+
+                </Grid>
+
+
+            </Border>
+
+        </Grid>
+
+        <!-- Pantalla de diagnòstics en curs-->
+
+        <Grid x:Name="RunningScreen"
+        Visibility="Collapsed"
+        Background="#0F1117">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Capçalera -->
+
+            <StackPanel Grid.Row="0"
+            Margin="0,20,0,0">
+
+                <Grid HorizontalAlignment="Center">
+
+                    <TextBlock Text="INFORMATI"
+                    Foreground="White"
+                    FontSize="54"
+                    FontWeight="Bold"/>
+
+                    <TextBlock Text="CASSA"
+                    Foreground="#3B82F6"
+                    FontSize="54"
+                    FontWeight="Bold"
+                    Margin="300,0,0,0"/>
+                </Grid>
+
+                <TextBlock Text="PCDiagnostic"
+                   FontSize="44"
+                    FontWeight="Bold"
+                    Foreground="#3B82F6"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Center"/>
+
+            </StackPanel>
+
+            <!-- Contingut -->
+            <StackPanel Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="600">
+
+                <TextBlock Text="DIAGNÒSTIC EN CURS"
+                   Foreground="White"
+                   FontSize="32"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"/>
+
+                <TextBlock x:Name="TxtModule"
+                    Text="Mòdul: Preparació"
+                    Foreground="White"
+                    FontSize="24"
+                    FontWeight="SemiBold"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0"/>
+
+                <TextBlock x:Name="TxtCurrentTask"
+                   Text="Preparant diagnòstic..."
+                   Foreground="#9CA3AF"
+                   FontSize="18"
+                   Margin="0,15,0,25"
+                   HorizontalAlignment="Center"/>                                
+
+                <ProgressBar x:Name="ProgressDiagnostic"
+                     Height="25"
+                     Minimum="0"
+                     Maximum="100"
+                     Value="0"/>
+
+                <TextBlock x:Name="TxtProgress"
+                   Text="0%"
+                   Foreground="White"
+                   FontSize="18"
+                   Margin="0,15,0,15"
+                   HorizontalAlignment="Center"/>
+
+                <TextBlock Text="No tanqueu l'aplicació durant el diagnòstic"
+                    Foreground="#9CA3AF"
+                    FontSize="22"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+
+            </StackPanel>
+
+
+            <!-- Peu -->
+
+            <Border Grid.Row="2" Height="80">
+                <Grid Grid.Row="2" Margin="0,28,20,0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="1">
+                     
+
+                        <TextBlock Text="BETA 1.0"
+                        Foreground="#F59E0B"
+                        FontWeight="SemiBold"
+                        HorizontalAlignment="Right"/>
+
+                        <TextBlock Text="Creat per Miquel Fajardo"
+                        Foreground="#6B7280"
+                        HorizontalAlignment="Right"/>
+                    </StackPanel>
+
+                </Grid>
+
+
+            </Border>
+
+        </Grid>
+
+        <!-- Pantalla final -->
+        <Grid x:Name="FinishedScreen"
+            Visibility="Collapsed"
+            Background="#0F1117">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Capçalera -->
+            
+            <StackPanel Grid.Row="0" Margin="0,20,0,0">
+                <Grid HorizontalAlignment="Center">
+
+                    <TextBlock Text="INFORMATI"
+                        Foreground="White"
+                        FontSize="54"
+                        FontWeight="Bold"/>
+
+                    <TextBlock Text="CASSA"
+                        Foreground="#3B82F6"
+                        FontSize="54"
+                        FontWeight="Bold"
+                        Margin="300,0,0,0"/>
+                </Grid>
+
+                <TextBlock Text="PCDiagnostic"
+                    FontSize="44"
+                    FontWeight="Bold"
+                    Foreground="#3B82F6"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Cos -->
+            <StackPanel Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="600">
+
+                <TextBlock Text="✓ DIAGNÒSTIC FINALITZAT"
+                   Foreground="#22C55E"
+                   FontSize="36"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"/>
+
+                <TextBlock x:Name="TxtFinishedInfo"
+                   Text="Mòduls executats: 0"
+                   Foreground="#9CA3AF"
+                   FontSize="18"
+                   Margin="0,20,0,40"
+                   HorizontalAlignment="Center"/>
+
+                <Button x:Name="BtnOpenReport"
+                    Content="📄 OBRIR INFORME"
+                    Height="60"
+                    Margin="0,0,0,15"
+                    Style="{StaticResource ModernButton}"
+                    Click="BtnOpenReport_Click"/>
+
+                <Button x:Name="BtnSendReport"
+                    Content="☁️ ENVIAR INFORME"
+                    Height="60"
+                    Margin="0,0,0,15"
+                    Style="{StaticResource SecondaryButton}"
+                    Click="BtnSendReport_Click"/>
+
+                <Button x:Name="BtnBackHome"
+                    Content="← TORNAR A L'INICI"
+                    Height="50"
+                    Style="{StaticResource SecondaryButton}"
+                    Click="BtnBackHome_Click"/>
+            </StackPanel>
+
+            <!-- Peu -->
+
+            <Border Grid.Row="2" Height="80">
+                <Grid Grid.Row="2" Margin="0,28,20,0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="1">
+
+
+                        <TextBlock Text="BETA 1.0"
+               Foreground="#F59E0B"
+               FontWeight="SemiBold"
+               HorizontalAlignment="Right"/>
+
+                        <TextBlock Text="Creat per Miquel Fajardo"
+               Foreground="#6B7280"
+               HorizontalAlignment="Right"/>
+                    </StackPanel>
+
+                </Grid>                
+            </Border>
+        </Grid>
     </Grid>
 </Window>
