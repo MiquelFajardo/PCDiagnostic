@@ -44,7 +44,7 @@ Descarrega l'última versió des de la secció **Releases**.
 Descomprimeix el fitxer ZIP i executa:
 
 ```
-PCDiagnostic.exe
+https://informaticassa.tailc888e4.ts.net/arxius/PCDiagnostic_V1.0.0_Windows_x64.zip
 ```
 
 No cal instal·lar l'aplicació.
