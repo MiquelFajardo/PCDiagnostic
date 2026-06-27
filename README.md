@@ -100,9 +100,7 @@ Pròximes funcionalitats:
 
 ## Llicència
 
-Aquest projecte es distribueix sota la llicència MIT.
-
-Consulta el fitxer LICENSE per a més informació.
+Aquest projecte es distribueix sota la llicència GPL v3.
 
 ---
 
